@@ -3,13 +3,19 @@ name: Deploy static site to GitHub Pages
 on:
   push:
     branches:
-      - main  # or master if you use that
+      - main  # or master if that's your default branch
 
 permissions:
-  contents: write  # allows pushing to gh-pages branch
+  contents: write      # allow pushing to gh-pages branch
+  pages: write         # allow GitHub Pages deployment
+  id-token: write      # required for OIDC authentication
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +28,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./  # folder with your HTML files
+          path: ./  # folder where your index.html lives
 
       - name: Deploy to GitHub Pages
         id: deployment
